@@ -12,14 +12,15 @@
 
     <name>TelegramWhitelist</name>
     <description>Whitelist management via Telegram bot for Minecraft 1.21.4</description>
-    <url>https://github.com/yourname/telegram-whitelist</url>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version> <!-- Minecraft 1.21.4 использует Java 17 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven-shade-plugin.version>3.5.1</maven-shade-plugin.version>
+        <okhttp.version>4.12.0</okhttp.version>
+        <json.version>20240303</json.version>
     </properties>
 
     <repositories>
@@ -34,7 +35,7 @@
     </repositories>
 
     <dependencies>
-        <!-- Paper API -->
+        <!-- Paper API для Minecraft 1.21.4 -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -42,36 +43,34 @@
             <scope>provided</scope>
         </dependency>
         
-        <!-- OkHttp for Telegram API -->
+        <!-- OkHttp для Telegram API -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
+            <version>${okhttp.version}</version>
         </dependency>
         
         <!-- JSON processing -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20240303</version>
+            <version>${json.version}</version>
         </dependency>
     </dependencies>
 
     <build>
+        <defaultGoal>clean package</defaultGoal>
         <finalName>${project.name}-${project.version}</finalName>
+        
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>*.yml</include>
-                    <include>*.yaml</include>
-                    <include>plugin.yml</include>
-                </includes>
             </resource>
         </resources>
         
         <plugins>
+            <!-- Компилятор Java -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -79,9 +78,15 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             
+            <!-- Сборка в один JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -94,8 +99,10 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <outputFile>target/${project.name}.jar</outputFile>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <outputFile>${project.build.directory}/${project.artifactId}.jar</outputFile>
+                            
+                            <!-- Перемещение зависимостей для избежания конфликтов -->
                             <relocations>
                                 <relocation>
                                     <pattern>okhttp3</pattern>
@@ -110,6 +117,8 @@
                                     <shadedPattern>com.yourname.telegramwhitelist.libs.json</shadedPattern>
                                 </relocation>
                             </relocations>
+                            
+                            <!-- Фильтры для исключения подписей -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -117,34 +126,31 @@
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>module-info.class</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
+                            
+                            <!-- Исключение Paper API из финального JAR -->
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>io.papermc.paper:paper-api</exclude>
+                                </excludes>
+                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             
+            <!-- Копирование ресурсов -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
             </plugin>
         </plugins>
     </build>
-    
-    <developers>
-        <developer>
-            <name>YourName</name>
-            <email>your@email.com</email>
-        </developer>
-    </developers>
 </project>
