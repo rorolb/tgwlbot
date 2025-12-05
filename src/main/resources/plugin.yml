@@ -4,14 +4,28 @@ main: com.yourname.telegramwhitelist.TelegramWhitelist
 api-version: '1.21'
 description: Плагин для добавления в вайтлист через Telegram бота
 author: YourName
+website: https://github.com/yourname/telegram-whitelist
 
 commands:
   tgwhitelist:
-    description: Управление плагином
+    description: Управление плагином Telegram Whitelist
     usage: /<command> [reload]
     permission: tgwhitelist.admin
+  
+  whitelist:
+    description: Управление вайтлистом с поддержкой Telegram
+    usage: /<command> [add|remove|on|off|list|tg]
+    aliases: [wl]
 
 permissions:
   tgwhitelist.admin:
-    description: Разрешение на управление плагином
+    description: Полный доступ к управлению плагином
     default: op
+  
+  tgwhitelist.moderator:
+    description: Может просматривать и обрабатывать заявки
+    default: false
+  
+  tgwhitelist.user:
+    description: Может просматривать статус заявок
+    default: false
