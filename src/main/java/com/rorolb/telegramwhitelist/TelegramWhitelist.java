@@ -16,7 +16,7 @@ public class TelegramWhitelist extends JavaPlugin implements Listener {
     private Map<String, PendingRequest> pendingRequests;
     private ConfigManager configManager;
     
-    @Override
+        @Override
     public void onEnable() {
         this.logger = getLogger();
         this.pendingRequests = new HashMap<>();
@@ -37,6 +37,17 @@ public class TelegramWhitelist extends JavaPlugin implements Listener {
         }
         
         this.bot = new TelegramBot(botToken, chatId, adminChatId, this);
+        
+        // Регистрация команд
+        WhitelistCommand whitelistCommand = new WhitelistCommand(this);
+        PluginCommand command = getCommand("whitelist");
+        if (command != null) {
+            command.setExecutor(whitelistCommand);
+            command.setTabCompleter(whitelistCommand);
+        }
+        
+        // Регистрация собственной команды
+        getCommand("tgwhitelist").setExecutor(this);
         
         // Регистрация событий
         getServer().getPluginManager().registerEvents(this, this);
@@ -120,4 +131,5 @@ public class TelegramWhitelist extends JavaPlugin implements Listener {
         }
         return false;
     }
+
 }
