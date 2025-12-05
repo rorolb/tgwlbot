@@ -5,12 +5,9 @@ telegram:
   bot-token: "ВАШ_ТОКЕН_БОТА"
   
   # ID чата (группы) куда отправлять заявки
-  # Чтобы получить ID, добавьте бота в группу и отправьте любое сообщение
-  # Затем перейдите по ссылке: https://api.telegram.org/bot<ВАШ_ТОКЕН>/getUpdates
   chat-id: "-1001234567890"
   
   # ID администратора (ваш ID в Telegram)
-  # Узнать можно через @userinfobot
   admin-chat-id: "123456789"
   
   # Дополнительные администраторы (их Telegram ID)
@@ -30,6 +27,19 @@ messages:
   approved: "✅ Ваша заявка на вайтлист принята! Теперь вы можете зайти на сервер."
   rejected: "❌ Ваша заявка на вайтлист отклонена."
   
+  commands:
+    no-permission: "§cУ вас нет прав для выполнения этой команды!"
+    request-not-found: "§cЗаявка не найдена!"
+    request-approved: "§aЗаявка одобрена!"
+    request-rejected: "§aЗаявка отклонена!"
+    config-reloaded: "§aКонфигурация перезагружена!"
+    
   errors:
     invalid-length: "❌ Никнейм должен быть от {min} до {max} символов."
     invalid-chars: "❌ Никнейм может содержать только латинские буквы, цифры и подчеркивание."
+
+# Настройки команд
+commands:
+  enable-integration: true  # Интеграция с /whitelist командой
+  auto-complete: true      # Автодополнение ников
+  broadcast-approvals: false # Оповещать сервер об одобрении заявок
